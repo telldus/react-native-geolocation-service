@@ -24,9 +24,6 @@ npm install react-native-geolocation-service
 | 0.57+      | 2.0.0           |
 | <0.57      | 1.1.0           |
 
-## Android
-Require SDK and Build tools version >= 29
-
 # Setup
 
 ## iOS
@@ -144,6 +141,39 @@ __No additional setup is required for 0.60 or above.__
     }
     ```
 </details>
+
+## Location Update When App is in Background/Killed(Android)
+To enable location update when the app is not running in the foreground, some additional configurations are required.
+
+1. In `android/build.gradle`[project-wide properties](Make sure SDK and Build tools are v29 or above)
+
+    ```gradle
+    buildscript {
+      ext {
+        buildToolsVersion = "29.0.3"
+        compileSdkVersion = 29
+        targetSdkVersion = 29
+        supportLibVersion = "29.0.0"
+      }
+    }
+    ```
+    
+2. In `AndroidManifest.xml`[Enable service and required permissions]
+    ```xml
+    <manifest>
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+        <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+        <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+        <application>
+           <service
+                android:name="com.agontuk.RNFusedLocation.RNFusedBackgroundLocationService"
+                android:exported="false"
+                android:foregroundServiceType="location"></service>
+        </application>
+    </manifest>
+    ```
 
 # Usage
 Since this library was meant to be a drop-in replacement for the RN's Geolocation API, the usage is pretty straight forward, with some extra error cases to handle.
